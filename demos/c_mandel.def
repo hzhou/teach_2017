@@ -1,0 +1,42 @@
+include: c/tcl.def
+module: c
+
+page: test, tk_frame
+    CFLAGS: -I/opt/X11/include -L/opt/X11/lib
+    w: 640
+    h: 480
+
+    $call tcl_eval, image
+
+    subcode:: init_commands
+        &call Command, setimg
+            &call set_image_block, argv[1], $(w),$(h)
+                &call each_pixel
+                    $call mandelbrot
+
+    subcode: mandelbrot
+        $(mset:cx=$(w)*2/3, cy=$(h)/2)
+        tf_x = 3.0 * (x-$(cx))/$(w)
+        tf_y = 3.0 * (y-$(cy))/$(w)
+        c = mandelbrot_escape(tf_x, tf_y)
+        $call set_gray, c
+
+#----------------------------------------------- 
+fncode: mandelbrot_escape(tf_x0, tf_y0)
+    $my tf_x=tf_x0, tf_y=tf_y0
+    $(set:contrast=10)
+    $for i=1:255/$(contrast)
+        tf_real = tf_x^2 - tf_y^2 
+        tf_imag = 2*tf_x*tf_y
+        tf_x = tf_real + tf_x0
+        tf_y = tf_imag + tf_y0
+        $if tf_x^2 + tf_y^2 >4.0
+            return 255-i*$(contrast)
+    return 0
+
+#----------------------------------------------- 
+tclcode: image
+    set image [image create photo]
+    setimg $image $(w) $(h)
+    pack [canvas .c -width $(w) -height $(h)] -fill both -expand 1
+    .c create image 0 0 -anchor nw -image $image

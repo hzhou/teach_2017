@@ -1,0 +1,46 @@
+page: python_mandel
+    type: py
+    w: 640
+    h: 480
+
+    import Tkinter
+    from Tkinter import *
+
+    $call mandel_code
+
+    pixel_size = 3.0/$(w)
+    x0 = 2.0
+    y0 = 1.125
+    &call tk_image
+        &call each_pixel
+            c = complex(x*pixel_size-x0, y*pixel_size-y0)
+            color = "#{0:02x}{0:02x}{0:02x}".format(mandel_code(c))
+
+subcode: mandel_code
+    def mandel_code(c):
+        z=c
+        for i in range(255/10):
+            z = z*z+c
+            if abs(z)>=2:
+                return 255-i*10
+        return 0
+
+subcode: tk_image
+    top = Tk()
+    canvas = Canvas(top, width=$(w), height=$(h), bg="#000000")
+    image = PhotoImage(width=$(w), height=$(h))
+    canvas.create_image((0,0), image=image, state="normal", anchor=Tkinter.NW)
+
+    BLOCK
+
+    canvas.pack()
+    mainloop()
+
+    subcode: each_pixel
+        for y in range($(h)):
+            # print("line "+str(y))
+            for x in range($(w)):
+                BLOCK
+                image.put(color, (x, y))
+
+
