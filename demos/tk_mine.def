@@ -1,0 +1,90 @@
+include: tcl/tk.def
+
+page: mine
+    module: tcl
+
+    set nw 9
+    set nh 9
+    set n_mines 10
+    set cw 50
+    set ch 50
+
+    set w [expr $cw * $nw]
+    set h [expr $ch * $nh]
+
+    canvas .c -width $w -height $h -bg white
+    pack .c -fill both -expand 0 -padx 5 -pady 5
+
+    $call init_mines
+    $call draw_mines
+    $call draw_buttons
+
+#----------------------------------------------- 
+subcode: draw_buttons
+    set im [image create bitmap -background gray]
+    $for i=0:$nw
+        $for j=0:$nh
+            set tag c-$i-$j
+            $(set:size=-width [expr $cw-2] -height [expr $ch-2])
+            # frame $cell $(size) -borderwidth 1 -relief sunken
+            button .c.$tag $(size) -image $im -command "left_click $i $j"
+            set x [expr $cw*$i]
+            set y [expr $ch*$j]
+            .c create window $x $y -anchor nw -window .c.$tag -tags $tag
+
+subcode: init_mines
+    $for i=0:$nw
+        $for j=0:$nh
+            set data(c-$i-$j) 0
+
+    $for k=0:$n_mines
+        $while 1
+            set i [expr int(rand()*$nw)]
+            set j [expr int(rand()*$nh)]
+            set key c-$i-$j
+            $if $data($key) eq 0
+                set data($key) "*"
+                break
+    $for i=0:$nw
+        $for j=0:$nh
+            $if $data(c-$i-$j) eq "*"
+                # puts "mine @ c-$i-$j"
+                $foreach ii in {-1 +0 +1}
+                    $foreach jj in {-1 +0 +1}
+                        set c c-[expr int($i $ii)]-[expr int($j $jj)]
+                        $if [info exists data($c)]
+                            $if $data($c) ne "*"
+                                # puts "mine @ $i, $j -- incr $c"
+                                incr data($c)
+
+subcode: draw_mines
+    .c create line 4 4 4 $h $w $h $w 4 4 4 -width 2 -fill black
+    $for i=1:$nw
+        set x [expr $i*$cw]
+        .c create line $x 1 $x $h -width 1 -fill black
+    $for i=1:$nh
+        set y [expr $i*$ch]
+        .c create line 1 $y $w $y -width 1 -fill black
+
+    $(if:0)
+        $for i=0:$nw
+            $for j=0:$nh
+                set x [expr $cw*($i+0.5)]
+                set y [expr $ch*($j+0.5)]
+                .c create text $x $y -anchor c -text "($i $j)"
+
+fncode: left_click(i, j)
+    set tag c-$i-$j
+    # puts "left_click $tag"
+    .c delete $tag
+    set x [expr $::cw*($i+0.5)]
+    set y [expr $::ch*($j+0.5)]
+    .c create text $x $y -anchor c -text $::data($tag)
+    
+    $if $::data($tag) eq "*"
+        tk_messageBox -type ok -message "You hit a mine!"
+
+fncode: right_click(i,j)
+    incr n_marked
+    # update button images
+
