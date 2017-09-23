@@ -1,0 +1,125 @@
+page: test
+    module: perl
+
+    $call sierpinski, 6
+
+#---------------------------------------- 
+subcode: sierpinski(iter)
+    macros: 
+        A: B-A-B
+        B: A+B+A
+        rule_set: A, B
+        init_str: A
+        dir_step: 60
+    $call l_system
+    $call output_svg, t.svg
+
+#---------------------------------------- 
+subcode: l_system
+    my %rule
+    $(for:a in $(rule_set))
+        $rule{$(a)} = "$($(a))"
+
+    my $s = "$(init_str)"
+    # ------------------
+    $for $i=0:$(iter)
+        my $s2=""
+        &call each_char, $s
+            $if $rule{$c}
+                $s2.=$rule{$c}
+            $else
+                $s2.=$c
+        $s = $s2
+    # $print [$s]
+
+subcode: plot
+    $call set_plot
+    my @stack
+    $Call start
+    &call each_char, $s
+        # $print -- c=$c
+        $if $c ge 'A' && $c le 'G'
+            $call get_pos
+            $Call lineto
+        $elif $c eq '+'
+            $dir+=$(dir_step)
+        $elif $c eq '-'
+            $dir-=$(dir_step)
+        $elif $c eq '['
+            push @stack, [$x, $y, $dir]
+        $elif $c eq ']'
+            my $t=pop @stack
+            ($x, $y, $dir)=@$t
+            $Call moveto
+    $Call finish
+
+    subcode: set_plot
+        my ($x, $y)=(0,0)
+        my $step = 10
+        my $dir = 0
+
+    subcode: get_pos
+        $x+=cos($dir*3.1415926535/180.0) *$step
+        $y+=sin($dir*3.1415926535/180.0) *$step
+
+#---- utils -------------------------------
+subcode: each_char(s)
+    my $n=length($(s))
+    $for $i=0:$n
+        my $c=substr($(s), $i, 1)
+        BLOCK
+
+#---------------------------------------- 
+fncode: approx_zero($f)
+    $if abs($f)<1e-6
+        return 0
+    $else
+        return $f
+
+#---- svg ------------
+subcode: output_svg(f)
+    my (@lines, $x0, $x1, $y0, $y1)
+    my $cur_line
+    $call plot
+    $print  --> $(f)
+    &call open_w, $(f)
+        $(set:print_to=Out)
+        my $margin=($x1-$x0)*0.05
+        my $viewbox=sprintf("%g %g %g %g", $x0-$margin, $y0-$margin, $x1+$margin, $y1+$margin)
+        $print <svg version="1.1" baseprofile="full" xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="$viewbox">
+        $foreach $l in @lines
+            my @s
+            $foreach $p in @$l
+                push @s, sprintf("%g %g", approx_zero($p->[0]), approx_zero($p->[1]))
+            my $s = join(", ", @s)
+            $print <polyline points="$s" style="stroke:black; fill: none;" />
+        $print </svg>
+
+    subcode: start
+        $cur_line=[]
+        push $cur_line, [$x, $y]
+        $x0=$x1=$x
+        $y0=$y1=$y
+
+    subcode: finish
+        push @lines, $cur_line
+
+    subcode: moveto
+        push @lines, $cur_line
+        $cur_line=[]
+        push $cur_line, [$x, $y]
+        $call checkbound
+
+    subcode: lineto
+        push $cur_line, [$x, $y]
+        $call checkbound
+
+    subcode: checkbound
+        $if $x0>$x
+            $x0=$x
+        $if $x1<$x
+            $x1=$x
+        $if $y0>$y
+            $y0=$y
+        $if $y1<$y
+            $y1=$y
