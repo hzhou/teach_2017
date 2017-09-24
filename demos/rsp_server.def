@@ -6,13 +6,32 @@ page: rsp_server
 page: rsp_client
     module: perl
 
-    &call run_client, "localhost"
-        my $ready_msg=<$socket>
-        print $ready_msg
-        my $bet=<>
-        print $socket $bet
-        my $ans=<$socket>
-        print "got ans: $ans\n"
+    my $server = $ARGV[0]
+    $if !$server
+        $server="localhost"
+
+    my $score
+    $while 1
+        &call run_client, $server
+            my $ready_msg=<$socket>
+            print $ready_msg
+            my $bet=<>
+            $if $bet =~ /quit/i
+                last
+            print $socket $bet
+            my $ans=<$socket>
+            $if $ans=~/([+-]?[01]): /
+                $score += $1
+            print "  --> $ans\n"
+            print "Score: $score\n"
+
+    subcode: run_client(ip)
+        my $socket = IO::Socket::INET->new(PeerAddr=>$(ip), PeerPort=>$(port), Proto=>"tcp", Type=>SOCK_STREAM)
+        $if !$socket
+            die "Couldn't connect to server\n"
+
+        BLOCK
+        close $socket
 
 #----------------------------------------------- 
 macros: 
@@ -36,32 +55,33 @@ subcode: run_server
     my $server = IO::Socket::INET->new(LocalPort=>$(port), Type=>SOCK_STREAM, Reuse=>1, Listen=>2)
     $if !$server
         die "Couldn't start server at port $(port)\n"
-    $print "Rock, Scissor, Paper: Server Ready\n"
 
-    $(for:A,B)
-        my $client_$1 = $server->accept()
-        $print "Player $1 connected\n"
-    my @bet
-    $map get_bet, $client_A, $client_B
+    $while 1
+        $print "Rock, Scissor, Paper: Server Ready\n"
+        $(for:A,B)
+            my $client_$1 = $server->accept()
+            $print "Player $1 connected\n"
+        my @bet
+        $map get_bet, $client_A, $client_B
 
-    my $ans = rsp_cmp($bet[0], $bet[1])
-    $bet[0] = $bet_name{$bet[0]}
-    $bet[1] = $bet_name{$bet[1]}
-    $if $ans>0 
-        print $client_A "+1: You: $bet[0]; Opponent: $bet[1]; You won\n"
-        print $client_B "-1: You: $bet[1]; Opponent: $bet[0]; You lost\n"
-    $elif $ans<0 
-        print $client_A "-1: You: $bet[0]; Opponent: $bet[1]; You lost\n"
-        print $client_B "+1: You: $bet[1]; Opponent: $bet[0]; You won\n"
-    $else
-        print $client_A "0: You: $bet[0]; Opponent: $bet[1]; Tie\n"
-        print $client_B "0: You: $bet[1]; Opponent: $bet[0]; Tie\n"
-    $print ans: [$ans] (message sent)
+        my $ans = rsp_cmp($bet[0], $bet[1])
+        $bet[0] = $bet_name{$bet[0]}
+        $bet[1] = $bet_name{$bet[1]}
+        $if $ans>0 
+            print $client_A "+1: You: $bet[0]; Opponent: $bet[1]; You won\n"
+            print $client_B "-1: You: $bet[1]; Opponent: $bet[0]; You lost\n"
+        $elif $ans<0 
+            print $client_A "-1: You: $bet[0]; Opponent: $bet[1]; You lost\n"
+            print $client_B "+1: You: $bet[1]; Opponent: $bet[0]; You won\n"
+        $else
+            print $client_A "0: You: $bet[0]; Opponent: $bet[1]; Tie\n"
+            print $client_B "0: You: $bet[1]; Opponent: $bet[0]; Tie\n"
+        $print ans: [$ans] (message sent)
 
-    <$client_A>
-    <$client_B>
-    close $client_A
-    close $client_B
+        <$client_A>
+        <$client_B>
+        close $client_A
+        close $client_B
 
 subcode: get_bet(client)
     $while 1
@@ -73,11 +93,3 @@ subcode: get_bet(client)
             last
 
 #----------------------------------------------- 
-subcode: run_client(ip)
-    my $socket = IO::Socket::INET->new(PeerAddr=>$(ip), PeerPort=>$(port), Proto=>"tcp", Type=>SOCK_STREAM)
-    $if !$socket
-        die "Couldn't connect to server\n"
-
-    BLOCK
-    close $socket
-

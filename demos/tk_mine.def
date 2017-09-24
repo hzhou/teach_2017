@@ -3,34 +3,25 @@ include: tcl/tk.def
 page: mine
     module: tcl
 
-    set nw 9
-    set nh 9
-    set n_mines 10
-    set cw 50
-    set ch 50
-
-    set w [expr $cw * $nw]
-    set h [expr $ch * $nh]
+    $call init, 9, 9, 10
 
     canvas .c -width $w -height $h -bg white
     pack .c -fill both -expand 0 -padx 5 -pady 5
 
     $call init_mines
-    $call draw_mines
+    $call draw_grids
     $call draw_buttons
 
 #----------------------------------------------- 
-subcode: draw_buttons
-    set im [image create bitmap -background gray]
-    $for i=0:$nw
-        $for j=0:$nh
-            set tag c-$i-$j
-            $(set:size=-width [expr $cw-2] -height [expr $ch-2])
-            # frame $cell $(size) -borderwidth 1 -relief sunken
-            button .c.$tag $(size) -image $im -command "left_click $i $j"
-            set x [expr $cw*$i]
-            set y [expr $ch*$j]
-            .c create window $x $y -anchor nw -window .c.$tag -tags $tag
+subcode: init(nw,nh,nm)
+    set nw $(nw)
+    set nh $(nh)
+    set n_mines $(nm)
+    set cw 50
+    set ch 50
+
+    set w [expr $cw * $nw]
+    set h [expr $ch * $nh]
 
 subcode: init_mines
     $for i=0:$nw
@@ -57,7 +48,7 @@ subcode: init_mines
                                 # puts "mine @ $i, $j -- incr $c"
                                 incr data($c)
 
-subcode: draw_mines
+subcode: draw_grids
     .c create line 4 4 4 $h $w $h $w 4 4 4 -width 2 -fill black
     $for i=1:$nw
         set x [expr $i*$cw]
@@ -66,13 +57,22 @@ subcode: draw_mines
         set y [expr $i*$ch]
         .c create line 1 $y $w $y -width 1 -fill black
 
-    $(if:0)
-        $for i=0:$nw
-            $for j=0:$nh
-                set x [expr $cw*($i+0.5)]
-                set y [expr $ch*($j+0.5)]
-                .c create text $x $y -anchor c -text "($i $j)"
+subcode: draw_buttons
+    set im [image create bitmap -background gray]
+    set im_flag [image create bitmap -background #eeeeee -foreground red -file flag.xbm]
+    $for i=0:$nw
+        $for j=0:$nh
+            set tag c-$i-$j
+            $(set:size=-width [expr $cw-2] -height [expr $ch-2])
+            # frame $cell $(size) -borderwidth 1 -relief sunken
+            button .c.$tag $(size) -image $im
+            bind .c.$tag <ButtonPress> "left_click $i $j"
+            bind .c.$tag <Shift-ButtonPress> "right_click $i $j"
+            set x [expr $cw*$i]
+            set y [expr $ch*$j]
+            .c create window $x $y -anchor nw -window .c.$tag -tags $tag
 
+#----------------------------------------------- 
 fncode: left_click(i, j)
     set tag c-$i-$j
     # puts "left_click $tag"
@@ -85,6 +85,9 @@ fncode: left_click(i, j)
         tk_messageBox -type ok -message "You hit a mine!"
 
 fncode: right_click(i,j)
+    set tag c-$i-$j
+    # puts "right_click $tag"
     incr n_marked
     # update button images
+    .c.$tag configure -image $::im_flag
 

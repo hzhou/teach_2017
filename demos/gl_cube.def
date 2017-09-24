@@ -1,0 +1,72 @@
+#---- Typical OpenGL Test -------------
+prerun: mydef_page -mglsl -oout gl_cube.def
+
+include: gl/osx.def
+include: gl/gl.def
+include: gl/glsl_util.def
+
+macros:
+    uniform_list: n_width, n_height, f_time
+    # attrib_list: pos, color
+    attrib_list: color, pos
+    varying_list: v3_fragcolor
+
+page: cube, gl_frame
+    module: c
+    shader: out/cube
+    shader_string: 1
+    window_size: 800, 600
+    fps: 30
+
+    $(setmacro:attrib_list=pos,color)
+    &call static_vertex_array
+        $(set:pos) join, ','
+            $(P000), $(P010), $(P110), $(P100)
+            $(P001), $(P011), $(P111), $(P101)
+            $(P000), $(P001), $(P101), $(P100)
+            $(P010), $(P011), $(P111), $(P110)
+            $(P000), $(P001), $(P011), $(P010)
+            $(P100), $(P101), $(P111), $(P110)
+        $(set:color) join, ','
+            $(red:x4,)
+            $(green:x4,)
+            $(blue:x4,)
+            $(cyan:x4,)
+            $(yellow:x4,)
+            $(purple:x4,)
+        $(set:element) join, ','
+            $(Quad:0,1,2,3)
+            $(Quad:4,5,6,7)
+            $(Quad:8,9,10,11)
+            $(Quad:12,13,14,15)
+            $(Quad:16,17,18,19)
+            $(Quad:20,21,22,23)
+        $(mexport:pos,color,element)
+
+#----------------------------------------------- 
+page: cube, vertex_shader
+    module: glsl
+    type: vsl
+
+    f_aspect = 1.0 * n_width / n_height
+    v3_p = pos
+    $call setup_model, v3_p
+    v3_fragcolor = color
+    gl_Position.xyz = v3_p
+    gl_Position.w = 1.0
+
+    subcode: setup_model(p)
+        # f_theta = $(degree:60.0)
+        f_theta = f_time/50.0
+        f_phi   = f_time/2.0
+        $call rotate, $(p).yz, f_theta
+        $call rotate, $(p).xz, f_phi
+        $(p).x/=f_aspect
+        $(p)/=4.0
+
+page: cube, fragment_shader
+    module: glsl
+    type: fsl
+
+    color = v3_fragcolor
+
