@@ -1,0 +1,29 @@
+page: p4
+    module: python
+
+    year = 1899
+
+    cnt=0
+    $while cnt<10
+        # $call print_if_leap
+        $call print_if_leap_expression
+        year += 1
+
+    subcode: print_if_leap
+        $if year % 4 ==0
+            $if year % 100 ==0 
+                $if year % 400==0
+                    $call leap
+                $else
+                    pass
+            $else
+                $call leap
+
+    subcode: print_if_leap_expression
+        $if year % 4 == 0 and (year % 100 >0 or year % 400 ==0)
+            $call leap
+
+    subcode: leap
+        print(year)
+        cnt+=1
+

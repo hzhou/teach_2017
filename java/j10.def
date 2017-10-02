@@ -1,0 +1,13 @@
+page: j10, basic_frame
+    module: java
+
+    n_year = 2017
+    count =0
+    $while true; n_year++
+        $if n_year % 4 ==0 && (n_year%100!=0 || n_year%400==0)
+            $print $n_year
+            count++
+            $if count>=20
+                break
+
+

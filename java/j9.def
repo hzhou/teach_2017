@@ -1,0 +1,18 @@
+page: j9, basic_frame
+    module: java
+
+    Rand = new Random()
+    n = Rand.nextInt(100)
+    # $print $n
+    $while true
+        &call input
+            $print Make a guess: 
+            n_guess = $(atoi:In.readLine())
+            $if n_guess<n
+                $print "Too small"
+            $elif n_guess>n
+                $print "Too big"
+            $else
+                $print "You got it"
+                break
+

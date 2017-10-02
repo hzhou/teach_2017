@@ -1,0 +1,4 @@
+page: j1, basic_frame
+    module: java
+
+    $print "Hello World"

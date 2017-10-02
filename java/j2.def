@@ -1,0 +1,7 @@
+page: j2, basic_frame
+    module: java
+
+    $print "Name: "
+    &call input
+        s_name = In.readLine()
+        $print "Hello $s_name"

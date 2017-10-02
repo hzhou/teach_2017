@@ -1,0 +1,4 @@
+page: p1
+    module: python
+
+    print("Hello World!")

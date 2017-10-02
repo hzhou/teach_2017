@@ -1,0 +1,10 @@
+page: j4, basic_frame
+    module: java
+
+    $print "number: "
+    &call input
+        n = $(atoi:In.readLine())
+        n_total = 0
+        $for i=1:n+1
+            n_total += i
+        $print "Total: $n_total"

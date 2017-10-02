@@ -1,0 +1,9 @@
+page: p2
+    module: python
+
+    s_name = raw_input("What is your name: ")
+    $if s_name == "Alice" or s_name == "Bob"
+        $print Hello $s_name
+    $else
+        $print Hello Stranger
+

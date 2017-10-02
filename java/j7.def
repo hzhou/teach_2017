@@ -1,0 +1,7 @@
+page: j7, basic_frame
+    module: java
+
+    $for i=1:13
+        $for j=1:13
+            $print "%4d -", i*j
+        $print
