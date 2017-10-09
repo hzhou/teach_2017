@@ -1,0 +1,20 @@
+page: j6, basic_frame
+    module: java
+
+    &call input
+        $print "number: "
+        n = $(atoi:In.readLine())
+        $print "sum or product?"
+        s_choice = In.readLine()
+        $if s_choice.equals("sum")
+            n_total = 0
+            $for i=1:n+1
+                n_total += i
+            $print "Total: $n_total"
+        $elif s_choice.equals("product")
+            n_total = 1
+            $for i=1:n+1
+                n_total *= i
+            $print "Total: $n_total"
+        $else
+            $print "Wrong choice!"

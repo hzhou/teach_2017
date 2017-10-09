@@ -1,0 +1,23 @@
+page: j8, basic_frame
+    module: java
+
+    primes = new ArrayList<Integer>()
+
+    i=2
+    $while true
+        $call test_is_prime
+        $if is_prime
+            $print $i
+            primes.add(i)
+
+        i++
+        $(if:0)
+            $if i>100
+                break
+
+    subcode: test_is_prime
+        is_prime = true
+        $foreach int j in primes
+            $if i% j==0
+                is_prime=false
+                break

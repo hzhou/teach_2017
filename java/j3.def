@@ -1,0 +1,10 @@
+page: j3, basic_frame
+    module: java
+
+    $print "Name: "
+    &call input
+        s_name = In.readLine()
+        $if s_name.equals("Alice") || s_name.equals("Bob")
+            $print "Hello $s_name"
+        $else
+            $print "Hello Stranger"
