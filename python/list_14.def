@@ -1,0 +1,13 @@
+page: t
+    module: python
+
+    tlist = digits(123456)
+    $for a in tlist
+        $print $a
+
+fncode: digits(n)
+    s = str(n)
+    tlist = []
+    $for i in range(len(s))
+        tlist.append(s[i])
+    return tlist

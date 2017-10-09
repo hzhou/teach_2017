@@ -1,0 +1,100 @@
+macros:
+    base: 10
+
+page: t
+    module: python
+
+    L1 = [7, 3]
+    L2 = [7, 2]
+
+    $(for:add, sub, mult)
+        $print "\n$1: "
+        tlist = t_$1(L1, L2)
+        $for a in tlist
+            $print $a
+
+fncode: t_add(L1, L2)
+    n1 = len(L1)
+    n2 = len(L2)
+    m = n1
+    $if m > n2
+        m = n2
+    tlist = []
+    carry = 0
+    $for i=0:m
+        $call _a, L1[i]+L2[i]
+
+    $if m<n1
+        $for i=m:n1
+            $call _a, L1[i]
+    $elif m<n2
+        $for i=m:n2
+            $call _a, L2[i]
+
+    $if carry
+        tlist.append(carry)
+
+    return tlist
+
+    subcode: _a(exp)
+        t = $(exp) + carry
+        $if t<$(base)
+            carry=0
+            tlist.append(t)
+        $else
+            carry=1
+            tlist.append(t-$(base))
+
+fncode: t_sub(L1, L2)
+    n1 = len(L1)
+    n2 = len(L2)
+    m = n1
+    $if m > n2
+        m = n2
+    tlist = []
+    borrow = 0
+    $for i=0:m
+        $call _a, L1[i]-L2[i]
+
+    $if m<n1
+        $for i=m:n1
+            $call _a, L1[i]
+    $elif m<n2
+        $for i=m:n2
+            $call _a, -L2[i]
+
+    $if borrow
+        tlist.append(-1)
+    return tlist
+        
+
+    subcode: _a(exp)
+        t = $(exp) - borrow
+        $if t>=0
+            borrow=0
+            tlist.append(t)
+        $else
+            borrow=1
+            tlist.append(t+$(base))
+
+fncode: t_mult(L1, L2)
+    n1 = len(L1)
+    n2 = len(L2)
+    m = n1+n2
+    tlist = [0 for i in range(m)]
+    $for i=n1
+        $for j=n2
+            tlist[i+j]+=L1[i]*L2[j]
+    # $print "%s", repr(tlist)
+    carry = 0
+    $for i=0:m
+        tlist[i] += carry
+        $if tlist[i]>=$(base)
+            carry = tlist[i] / $(base)
+            tlist[i] -= carry * $(base)
+        $else
+            carry = 0
+    $while tlist[-1]==0
+        tlist.pop()
+    return tlist
+

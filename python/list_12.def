@@ -1,0 +1,33 @@
+page: t
+    module: python
+
+    L = range(1,7)
+
+    rot(L, 2)
+    $for a in L
+        $print $a
+
+fncode: rot(L, k)
+    n = len(L)
+    k %= n
+    $if k==0
+        pass
+    $elif k<n/2
+        $(set:L=L[$1])
+        $call rot_k
+    $else
+        k = n-k
+        $(set:L=L[n-1-($1)])
+        $call rot_k
+
+    subcode: rot_k
+        $for i0=0:k
+            t = $(L:i0)
+            i=i0
+            $while i+k<n
+                $(L:i) = $(L:i+k)
+                i+=k
+            $if i+k-n == i0
+                $(L:i) = t
+            $else
+                $(L:i) = $(L:(i+k)-n)

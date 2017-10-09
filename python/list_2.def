@@ -1,0 +1,16 @@
+page: t
+    module: python
+
+    list = [1, 2, 3, 4, 5, 6]
+    reverse(list)
+
+    $for a in list
+        $print $a
+
+fncode: reverse(list)
+    n = len(list)
+    $for i in range(n/2)
+        j = n-1-i
+        t = list[i]
+        list[i] = list[j]
+        list[j] = t

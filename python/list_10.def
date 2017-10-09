@@ -1,0 +1,28 @@
+page: t
+    module: python
+
+    La = [1, 2, 3]
+    Lb = ["a", "b", "c", "d", "e"]
+
+    tlist = concat(La, Lb)
+    $for a in tlist
+        $print $a
+
+fncode: concat(L1, L2)
+    n1 = len(L1)
+    n2 = len(L2)
+
+    m = n1
+    $if m>n2
+        m=n2
+
+    tlist = []
+    $for i in range(m)
+        tlist.append(L1[i])
+        tlist.append(L2[i])
+    $if m<n1
+        tlist.extend(L1[m:])
+    $elif m<n2
+        tlist.extend(L2[m:])
+
+    return tlist

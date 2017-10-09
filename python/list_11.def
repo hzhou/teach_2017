@@ -1,0 +1,33 @@
+page: t
+    module: python
+
+    La = [1, 4, 6]
+    Lb = [2, 3, 5]
+
+    tlist = merge(La, Lb)
+    $for a in tlist
+        $print $a
+
+fncode: merge(L1, L2)
+    n1 = len(L1)
+    n2 = len(L2)
+    i1 = 0
+    i2 = 0
+
+    tlist = []
+    $while i1<n1 and i2<n2
+        $if L1[i1]<L2[i2]
+            tlist.append(L1[i1])
+            i1+=1
+        $else
+            tlist.append(L2[i2])
+            i2+=1
+
+    $if i1<n1
+        $for i in range(i1, n1)
+            tlist.append(L1[i])
+    $elif i2<n2
+        $for i in range(i2, n2)
+            tlist.append(L2[i])
+
+    return tlist

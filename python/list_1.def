@@ -1,0 +1,14 @@
+page: t
+    module: python
+
+    list = [1, 2, 3, 4, 5, 6]
+    n_max = find_max(list)
+    $print max (6): $n_max
+
+fncode: find_max(list)
+    max = list[0]
+    $for a in list
+        $if max<a
+            max=a
+    return max
+

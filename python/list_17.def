@@ -1,0 +1,77 @@
+page: t
+    module: python
+
+    L = [3, 4, 6, 1, 5, 2]
+
+    $(if:0)
+        sort_select(L)
+    $(elif:0)
+        sort_insert(L)
+    $(elif:1)
+        sort_quick(L)
+    $print "%s", repr(L)
+
+fncode: sort_select(L)
+    n = len(L)
+    $for i=0:n-1
+        $call find_min
+        $if i_min>i
+            $call swap, i, i_min
+
+    subcode: find_min
+        i_min = i
+        $for j=i+1:n
+            $if L[i_min] > L[j]
+                i_min = j
+
+    subcode: swap(i, j)
+        t = L[$(i)]
+        L[$(i)] = L[$(j)]
+        L[$(j)] = t
+
+fncode: sort_insert(L)
+    n=len(L)
+    $for i=1:n
+        $call find_pos
+        $if i_pos<i
+            $call insert
+            
+    subcode: find_pos
+        i_pos = i
+        $for j=0:i
+            $if L[j]>L[i]
+                i_pos = j
+                break
+
+    subcode: insert
+        t=L[i]
+        $for j=i:i_pos:-1
+            L[j] = L[j-1]
+        L[i_pos] = t
+
+fncode: sort_quick(L)
+    n = len(L)
+    qsort(L, 0,n-1)
+
+fncode: qsort(L, lo, hi)
+    $if lo==hi
+        return
+
+    t = L[hi]
+    i = lo-1
+    $for j=lo:hi
+        $if L[j]<t
+            i+=1
+            $if i<j
+                $call swap, i, j
+    $if hi>i+1
+        i+=1
+        $call swap, i, hi
+    qsort(L, lo, i)
+    qsort(L, i+1, hi)
+
+    subcode: swap(i, j)
+        t = L[$(i)]
+        L[$(i)]=L[$(j)]
+        L[$(j)]=t
+

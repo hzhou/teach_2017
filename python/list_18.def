@@ -1,0 +1,23 @@
+page: t
+    module: python
+
+    L = range(100)
+
+    i = binary_search(L, 37)
+    $print pos: $i
+
+fncode: binary_search(L, t)
+    return bin_search(L, 0, len(L)-1, t)
+
+fncode: bin_search(L, lo, hi, t)
+    $if lo>=hi
+        return -1
+    i = (lo+hi)/2
+    $if L[i]<t
+        return bin_search(L, i+1, hi, t)
+    $elif L[i]>t
+        return bin_search(L, lo, i-1, t)
+    $else
+        return i
+
+

@@ -1,0 +1,12 @@
+page: t
+    module: python
+
+    tlist = fib(100)
+    $for a in tlist
+        $print $a
+
+fncode: fib(n)
+    tlist=[1,1]
+    $for i=2:n
+        tlist.append( tlist[i-2]+tlist[i-1])
+    return tlist

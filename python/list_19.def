@@ -1,0 +1,19 @@
+page: t
+    module: python
+
+    list = ["Hello", "World", "in", "a", "frame"]
+    box_print(list)
+
+fncode: box_print(L)
+    n = 0
+    $for a in L
+        $if n<len(a)
+            n=len(a)
+
+    print('*' * (n+4))
+    $for a in L
+        $print * -
+        $print $a-
+        print(' '*(n-len(a))+' *')
+    print('*' * (n+4))
+

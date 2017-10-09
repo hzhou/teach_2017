@@ -1,0 +1,15 @@
+page: t
+    module: python
+
+    La = [1, 2, 3]
+    Lb = ["a", "b", "c"]
+
+    tlist = concat(La, Lb)
+    $for a in tlist
+        $print $a
+
+fncode: concat(L1, L2)
+    tlist = []
+    tlist.extend(L1)
+    tlist.extend(L2)
+    return tlist

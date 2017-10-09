@@ -1,0 +1,22 @@
+page: t
+    module: python
+
+    L = [7, 3]
+    tlist = conv(L, 10, 16)
+    $for a in tlist
+        $print $a
+
+fncode: conv(L, base_from, base_to)
+    n = len(L)
+    sum = 0
+    $for i=0:n
+        sum *= base_from
+        sum += L[n-1-i]
+
+    tlist = []
+    $while sum>0
+        tlist.append(sum % base_to)
+        sum /= base_to
+
+    return tlist
+

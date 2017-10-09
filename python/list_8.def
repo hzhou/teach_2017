@@ -1,0 +1,20 @@
+page: t
+    module: python
+
+    list = range(1,21)
+    tlist = map(list, F)
+
+    $for a in tlist
+        $print $a
+
+fncode: F(a)
+    return a*a
+
+fncode: map(list, fn)
+    tlist = []
+    $for a in list
+        tlist.append(fn(a))
+    return tlist
+
+
+    

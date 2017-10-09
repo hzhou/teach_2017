@@ -1,0 +1,16 @@
+page: t
+    module: python
+
+    text = "The quick brown fox"
+    s = pig_latin(text)
+    $print $s
+
+fncode: pig_latin(t)
+    list = t.split(' ')
+    tlist = []
+    $for a in list
+        s = a[1].upper() + a[2:] + a[0].lower() +"ay"
+        tlist.append(s)
+
+    return ' '.join(tlist)
+

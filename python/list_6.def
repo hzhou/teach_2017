@@ -1,0 +1,16 @@
+page: t
+    module: python
+
+    $for s in ["abcba", "abcde"]
+        $if is_palindrome(s)
+            $print $s -- yes
+        $else
+            $print $s -- no
+
+fncode: is_palindrome(s)
+    n = len(s)
+    $for i in range(0, n/2)
+        j = n-1-i
+        $if s[i]!=s[j]
+            return False
+    return True
