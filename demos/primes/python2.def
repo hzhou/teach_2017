@@ -1,0 +1,23 @@
+page: t
+    module: python
+
+    $call start_time
+
+    primes = [2]
+    cnt = 1
+    n=2
+    $while 1
+        n += 1
+        is_prime = 1
+        $for i in primes
+            $if n % i == 0
+                is_prime = 0
+                break
+        $if is_prime
+            primes.append(n)
+            $call new_prime, n
+
+    subcode: new_prime(p)
+        cnt+=1
+        $if cnt % 1000 ==0
+            $call print_time, $cnt - $$(p)

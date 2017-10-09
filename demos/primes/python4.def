@@ -1,0 +1,55 @@
+macros: 
+    N: 10000
+
+page: t
+    module: python
+
+    $call start_time
+
+    cnt = 1
+    primes = [2]
+    primes_start = [4]
+    i2 = 3
+    $while 1
+        $call init_tlist, i2
+        $call sieve_1
+        $call find_new_primes
+
+    subcode: new_prime(p)
+        cnt+=1
+        # $print $cnt - $$(p)
+        $if cnt % 1000 ==0
+            $call print_time, $cnt - $$(p)
+
+subcode: init_tlist(i)
+    i1 = $(i)
+    i2 = i1+$(N)
+    tlist = [0 for i in range($(N))]
+
+subcode: sieve_1
+    $for _i in range(0, len(primes))
+        p = primes[_i]
+        i = primes_start[_i]-i1
+        $while i<$(N)
+            tlist[i] = 1
+            i+=p
+        primes_start[_i] = i+i1
+
+subcode: find_new_primes
+    i = i1
+    $while i<i2
+        $if tlist[i-i1]==0
+            $call @new_prime, i
+            $call sieve_2
+        i+=1
+
+
+    subcode: sieve_2
+        primes.append(i)
+        p = i
+        j = p+p - i1
+        $while j<$(N)
+            tlist[j] = 1
+            j+=p
+        primes_start.append(j+i1)
+

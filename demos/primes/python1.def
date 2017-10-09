@@ -1,0 +1,19 @@
+page: t
+    module: python
+
+    $call start_time
+
+    cnt = 1
+    n=2
+    $while 1
+        n += 1
+        is_prime = 1
+        $for i in range(2, n)
+            $if n % i == 0
+                is_prime = 0
+                break
+        $if is_prime
+            cnt += 1
+            $if cnt % 1000 == 0
+                $call print_time, $cnt - $n
+

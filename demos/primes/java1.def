@@ -1,0 +1,18 @@
+page: t, basic_frame
+    module: java
+
+    $local int cnt
+    cnt = 1
+    n = 2
+    $call start_time
+    $while true
+        n += 1
+        is_prime = true
+        $for i=2:n
+            $if n % i == 0
+                is_prime = false
+                break
+        $if is_prime
+            cnt += 1
+            $if cnt % 1000 == 0
+                $call print_time, $cnt - $n

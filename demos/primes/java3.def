@@ -1,0 +1,29 @@
+macros: 
+    N: 10000000
+    M: 100000
+
+page: t, basic_frame
+    module: java
+
+    $local int cnt = 1
+    tlist = new byte[$(N)]
+
+    $call start_time
+
+    i= 2
+    $while i<$(N)
+        $if tlist[i]==0
+            $call @new_prime, i
+            $call sieve, i
+        i+=1
+
+    subcode: sieve(p)
+        j = $(p)+$(p)
+        $while j<$(N)
+            tlist[j] = 1
+            j+=$(p)
+
+    subcode: new_prime(p)
+        cnt+=1
+        $if cnt % $(M) ==0
+            $call print_time, $cnt - $$(p)
