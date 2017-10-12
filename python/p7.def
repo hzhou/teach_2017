@@ -1,5 +1,6 @@
 page: p7
     module: python
+    use_python: 2
 
     $for i in range(1,13)
         $for j in range(1,13)

@@ -1,10 +1,10 @@
 page: t, basic_frame
-    module: java
+    module: c
 
     $local int cnt
     cnt = 1
     n = 2
-    $call start_time
+    $call start_clock
     $while true
         n += 1
         is_prime = true
@@ -15,4 +15,4 @@ page: t, basic_frame
         $if is_prime
             cnt += 1
             $if cnt % 1000 == 0
-                $call print_time, $cnt - $n
+                $call report_clock, $cnt - $n

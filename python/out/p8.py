@@ -1,4 +1,3 @@
-from __future__ import print_function
 primes = []
 n = 2
 while n<100:

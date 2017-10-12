@@ -3,7 +3,7 @@ include: c/bignum.def
 page: pi, basic_frame
     module: c
     use_double: 1
-    N: 100
+    N: 1000
 
     $call calc_pi, $(N)
 

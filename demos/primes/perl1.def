@@ -1,0 +1,13 @@
+page: t
+    module: perl
+
+    my $n=2
+    $while $n<1201
+        $for $i=2:$n
+            $if $n % $i == 0
+                goto next_n
+        $print "%4d -", $n
+        next_n:
+            $n++
+            $if $n%100==0
+                $print
