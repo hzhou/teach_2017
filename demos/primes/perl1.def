@@ -1,13 +1,17 @@
-page: t
+page: primes
     module: perl
+    N: 1000
+
+    my $N=$(N)
+    $if $ARGV[0]>2
+        $N = $ARGV[0]
 
     my $n=2
-    $while $n<1201
+    $while $n<$N
         $for $i=2:$n
             $if $n % $i == 0
                 goto next_n
-        $print "%4d -", $n
+        $print "%d -", $n
         next_n:
             $n++
-            $if $n%100==0
-                $print
+    $print

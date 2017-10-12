@@ -5,24 +5,29 @@ page: pi, basic_frame
     use_double: 1
     N: 1000
 
-    $call calc_pi, $(N)
+    $if argc>1 
+        n_digit = atoi(argv[1])
+    $else
+        n_digit = $(N)
+    $call calc_pi
 
-    $print "pi [$(N) digits]:\t-"
-    f.$print $(N)+1
+
+    $print "pi [$n_digit digits]:\t-"
+    f.$print n_digit+1
     $print
 
 
-subcode: calc_pi(n_digit)
+subcode: calc_pi
     # atan(x) = x - x^3/3 +x^5/5 ...
     # pi = 16 atan(1/5) - 4 atan(1/239)
     #    ~ 1.4 digit per term
-    n_prec = (int)(3.321928*$(n_digit))+10
+    n_prec = (int)(3.321928*n_digit)+10
     $(set:prec=n_prec)
     $local mpfr f: 0.0
     $call init_fraction, f1, 1, 5
     $call init_fraction, f2, 1, 239
 
-    n = (int)($(n_digit)/1.4)+10
+    n = (int)(n_digit/1.4)+10
     &call atan_loop, n
         $local mpfr t1
         $local mpfr t2
