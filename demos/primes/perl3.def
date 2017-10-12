@@ -1,0 +1,34 @@
+macros: 
+    N: 10000000
+    M: 100000
+
+page: t
+    module: perl
+
+    my $cnt = 1
+    my @tlist
+    $call start_clock
+
+    $for $i=2:$(N)
+        $if !$tlist[$i]
+            $call @new_prime, $i
+            $call sieve, $i
+
+    subcode: sieve(p)
+        my $j = $(p)+$(p)
+        $while $j<$(N)
+            $tlist[$j] = 1
+            $j+=$(p)
+
+    subcode: new_prime(p)
+        $cnt+=1
+        $if $cnt % $(M) ==0
+            $call report_clock, $cnt - $(p)
+
+subcode: start_clock
+    my $time_start = time
+
+subcode: report_clock(msg)
+    my $time_diff = time()-$time_start
+    $print $(msg): $time_diff sec
+
