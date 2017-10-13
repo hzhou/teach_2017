@@ -59,7 +59,7 @@ subcode: draw_grids
 
 subcode: draw_buttons
     set im [image create bitmap -background gray]
-    set im_flag [image create bitmap -background #eeeeee -foreground red -file flag.xbm]
+    set im_flag [image create bitmap -background #eeeeee -foreground red -file resource/flag.xbm]
     $for i=0:$nw
         $for j=0:$nh
             set tag c-$i-$j

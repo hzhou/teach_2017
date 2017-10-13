@@ -1,0 +1,29 @@
+include: python/tk_canvas.def
+
+page: test, tk_canvas
+    module: python
+    width: 500
+    height: 500
+    background: #fcfcfc
+
+    $call rect_line
+    $call nine_dots, 150, 20
+    $call text, 50, 200, text="Hello World!", font=("Helvetica", 36, "italic"), anchor=tk.NW, fill="maroon"
+    photo = tk.PhotoImage(file='resource/cat.gif')
+    $call image, 250, 200, image=photo, anchor=tk.NW
+
+subcode: rect_line
+    $call rect, 5, 5, 105, 105, fill='green'
+    $call line, 10, 10, 100, 40, fill='red'
+
+subcode: nine_dots(ox, oy)
+    $(set:p=$1*40+$(ox),$2*40+$(oy))
+    $for i in [1,2,3]
+        $for j in [0,1,2]
+            $call dot, $(p:j,i), 2
+
+    $call line, $(p:0,3),$(p:3,3),$(p:0,0),$(p:0,3),$(p:3,0), arrow=tk.LAST, fill='blue'
+
+    subcode: dot(x, y, r)
+        $call oval,$(x)-$(r), $(y)-$(r), $(x)+$(r), $(y)+$(r), fill='gray20'
+
