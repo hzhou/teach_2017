@@ -1,0 +1,40 @@
+include: shader_mandel.def
+
+#---- Sahder Toy Frame -------------
+prerun: mydef_page -mglsl -oout shader_toys.def
+
+include: gl/osx.def
+include: gl/gl.def
+include: gl/glsl_util.def
+
+macros:
+    uniform_list: n_width, n_height, f_time
+    attrib_list: pos
+    varying_list: v2_uv
+
+page: toy, gl_frame
+    module: c
+    shader: out/toy
+    shader_string: 1
+    window_size: 800, 600
+    fps: 30
+
+    $call demo_square
+
+#----------------------------------------------- 
+page: toy, vertex_shader
+    module: glsl
+    type: vsl
+
+    gl_Position.xyz = pos
+    gl_Position.w = 1.0
+    v2_uv = gl_Position.xy
+    v2_uv.x *= float(n_width) / float(n_height)
+
+page: toy, fragment_shader
+    module: glsl
+    type: fsl
+
+    # color = vec3(1,0,0)
+    $call shader_main
+
