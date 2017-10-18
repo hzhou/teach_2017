@@ -17,7 +17,7 @@ page: toy, gl_frame
     shader: out/toy
     shader_string: 1
     window_size: 800, 600
-    fps: 30
+    # fps: 30
 
     $call demo_square
 

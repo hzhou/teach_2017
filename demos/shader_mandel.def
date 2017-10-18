@@ -8,12 +8,7 @@ macros:
 subcode: shader_main
     vec2 z = vec2(0.0);
     vec2 c = v2_uv;
-    f_omega = 6.28/20
-    # cycle [0:1]
-    f_cycle = (sin(f_omega*f_time-3.14/2)+1)/2
-    f_scale = pow(2.0,-12*f_cycle)
-    $(for:x,y and -0.5, 0.0 and $(zoom))
-        f_o$1 = $2+($3-($2))*(1-f_scale)
+    $call cycle_scale_offset
     c *= f_scale * 1.5 ;
     c += vec2(f_ox, f_oy);
     
@@ -34,11 +29,23 @@ subcode: shader_main
         $(set:smooth=2.0-log(log(f_l))*1.5)
         f_iter += $(smooth)
         f_iter /= $(color_scale)
+        $call calc_f_hue
+        color = h2rgb(f_hue)
+
+    # --------------------------
+    subcode: cycle_scale_offset
+        f_omega = 6.28/20
+        # cycle [0:1]
+        f_cycle = (sin(f_omega*f_time-3.14/2)+1)/2
+        f_scale = pow(2.0,-12*f_cycle)
+        $(for:x,y and -0.5, 0.0 and $(zoom))
+            f_o$1 = $2+($3-($2))*(1-f_scale)
+
+    # --------------------------
+    subcode: calc_f_hue
         f_hue = f_time*0.2454
         f_cycle = sin(f_omega*f_time/2)
         f_hue  += pow(f_iter, 0.2*f_cycle+0.4)
-
-        color = h2rgb(f_hue)
 
     $function h2rgb(float h)
         $return_type vec3
