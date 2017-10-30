@@ -11,17 +11,13 @@ page: maze, gui_frame
     &call add_canvas, canvas, n_canvas_w, n_canvas_h
         $call paint_maze
 
-    $private n_end_count 
-    n_end_count  = 9999
+    $private n_end_count = 9999
 
     $(eval:t=int(1000/$(fps)))
     &call animate, $(t), 1000
         $(eval:n=$(fps)*$(end_pause))
 	$if n_end_count>$(n) 
-            maze_create()
-            $call init_image
-            maze_draw()
-            $call maze_walk_init
+            $call new_maze
             n_end_count=0
 	    timer.restart()
         $elif n_end_count>0
@@ -31,8 +27,14 @@ page: maze, gui_frame
         canvas.repaint()
 
     # -----------------------
+    subcode: new_maze
+        maze_create()
+        $call init_image
+        maze_draw()
+        $call maze_walk_init
+
     fncode: maze_create
-        $call maze_create_init
+        $call maze_create_sub
 
     fncode: maze_draw
         $call img_maze_draw
@@ -41,7 +43,7 @@ page: maze, gui_frame
         $call img_mark_cell
 
 #---- Create ---------------------------------- 
-subcode: maze_create_init
+subcode: maze_create_sub
     $call init_size
     $call init_cx
 
@@ -76,11 +78,8 @@ subcode: maze_create_init
 
     # ----------------------
     subcode: init_maze
-        $private pc_maze
-        pc_maze = new byte[n_x*n_y]
-
-        $private int[] p_path
-        p_path = new int[n_x*n_y*2]
+        $private pc_maze = new byte[n_x*n_y]
+        $private p_path = new int[n_x*n_y*2]
 
         $call maze_init_wall
         $call maze_init_door
@@ -188,8 +187,9 @@ macros:
     walk_dir: p_walk[i_walk*4+3]
 
 subcode: maze_walk_init
-    $private int[] p_walk, i_walk, n_end_count
-    p_walk = new int[n_x*n_y*4] # x, y, n_ways, n_dir
+    # x, y, n_ways, n_dir
+    $private p_walk = new int[n_x*n_y*4]
+    $private i_walk
     k = n_finish_x + n_finish_y * n_x
     pc_maze[k] |= $(FINISH)
 
@@ -301,8 +301,8 @@ subcode: paint_maze
 # -------------------------------------- 
 subcode: init_image
     $import java.awt.image.BufferedImage
-    $private BufferedImage b_img, Graphics2D g_img
-    b_img = new BufferedImage(n_w, n_h, BufferedImage.TYPE_4BYTE_ABGR)
+    $private b_img = new BufferedImage(n_w, n_h, BufferedImage.TYPE_4BYTE_ABGR)
+    $private Graphics2D g_img
     g_img = b_img.createGraphics()
 
 # -------------------
@@ -353,11 +353,9 @@ subcode: init(w, h)
     $private n_canvas_w=$(w)-10, n_canvas_h=$(h)-40
     $call init_random
     $call init_color
-    # $private pc_maze=null
 
     subcode: init_random
-        $private Random rand
-        rand = new Random
+        $private rand = new Random()
 
     subcode: init_color
         $call color, wall, 0.9, 0.8, 0.9
@@ -369,8 +367,7 @@ subcode: init(w, h)
         $call color, deadend, 0.3, 0.3, 0.1
 
         subcode: color(name, r, g, b)
-            $private Color color_$(name)
-            color_$(name)=new Color($(r)f, $(g)f, $(b)f)
+            $private color_$(name)=new Color($(r)f, $(g)f, $(b)f)
 
 #---- utils ------------------------------- 
 subcode: _autoload
