@@ -4,7 +4,7 @@ include: shader_mandel.def
 prerun: mydef_page -mglsl -oout shader_toys.def
 
 include: gl/osx.def
-include: gl/gl.def
+include: gl/gl_geometry.def
 include: gl/glsl_util.def
 
 macros:

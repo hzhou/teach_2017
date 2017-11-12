@@ -4,7 +4,7 @@ page: maze, gui_frame
     module: java
     title: Maze
     size: 800, 600
-    fps: 5
+    fps: 50
     end_pause: 10
 
     $call init, $(size)

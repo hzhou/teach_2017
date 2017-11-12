@@ -2,7 +2,7 @@
 prerun: mydef_page -mglsl -oout gl_cube.def
 
 include: gl/osx.def
-include: gl/gl.def
+include: gl/gl_geometry.def
 include: gl/glsl_util.def
 
 macros:
