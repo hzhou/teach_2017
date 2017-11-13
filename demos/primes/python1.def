@@ -16,4 +16,8 @@ page: t
             cnt += 1
             $if cnt % 1000 == 0
                 $call print_time, $cnt - $n
+            $(if:0)
+                $if cnt==2388
+                    $print $cnt: $n
+                    break
 
