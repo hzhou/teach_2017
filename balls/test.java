@@ -7,8 +7,6 @@ import javax.swing.Timer;
 public class test {
     private JFrame frame;
     private double f_theta;
-    private double f_dx;
-    private double f_dy;
     private JPanel canvas;
     private Timer timer;
 
@@ -21,8 +19,6 @@ public class test {
         });
         frame.setLayout(new FlowLayout());
         f_theta = 0;
-        f_dx = 0;
-        f_dy = 5;
         canvas = new JPanel(){
             public void paintComponent(Graphics g0){
                 super.paintComponent(g0);
@@ -39,12 +35,12 @@ public class test {
         frame.add(canvas);
         timer = new Timer(1000/60, new ActionListener(){
             public void actionPerformed(ActionEvent evt){
-                f_theta += 0.01;
+                f_theta += 0.05;
                 canvas.repaint();
             }
         });
         timer.start();
-        frame.setSize(500, 500);
+        frame.pack();
         frame.setVisible(true);
     }
 

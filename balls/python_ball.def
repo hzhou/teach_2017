@@ -1,0 +1,27 @@
+include: python/tkinter.def
+
+page: test, tkinter
+    module: python
+
+    x0 = 250
+    y0 = 250
+    theta=0.0
+    &call add_canvas, 500, 500
+        $call circle, x0+100, y0, 20
+
+    C.config(background='#eeee00')
+
+    &call animate, 1000/30
+        global theta
+        theta+=0.05
+        $import math
+        x = x0 + 100 * math.cos(theta)
+        y = y0 + 100 * math.sin(theta)
+        $call moveto, x, y, 20
+
+subcode: circle(x, y, w)
+    ball = C.create_oval($(x), $(y), $(x)+$(w), $(y)+$(w), fill='gray20')
+
+subcode: moveto(x, y, w)
+    C.coords(ball,$(x), $(y), $(x)+$(w), $(y)+$(w))
+

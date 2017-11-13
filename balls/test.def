@@ -2,14 +2,12 @@ include: java/gui.def
 
 page: test, gui_frame
     module: java
-    size: 500, 500
     x0: 250
     y0: 250
     r: 100
     fps: 60
 
     $private f_theta=0
-    $private f_dx=0, f_dy=5
     &call add_canvas, canvas, 500, 500
         $local int x, int y
         x=$(x0)+(int)($(r)*Math.cos(f_theta))
@@ -17,5 +15,5 @@ page: test, gui_frame
         g.fillOval(x, y, 20, 20)
 
     &call animate, 1000/$(fps), -
-        f_theta+=0.01
+        f_theta+=0.05
         canvas.repaint()
