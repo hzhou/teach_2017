@@ -6,7 +6,11 @@ import javax.swing.Timer;
 
 public class test {
     private JFrame frame;
-    private double f_theta;
+    private int x;
+    private int y;
+    private int size;
+    private int dx;
+    private int dy;
     private JPanel canvas;
     private Timer timer;
 
@@ -18,24 +22,50 @@ public class test {
             }
         });
         frame.setLayout(new FlowLayout());
-        f_theta = 0;
+        x = 0;
+        y = 100;
+        size = 20;
+        dx = 1;
+        dy = 0;
         canvas = new JPanel(){
             public void paintComponent(Graphics g0){
                 super.paintComponent(g0);
                 Graphics2D g = (Graphics2D)g0;
-                int x;
-                int y;
-
-                x = 250 + (int)(100 * Math.cos(f_theta));
-                y = 250 + (int)(100 * Math.sin(f_theta));
-                g.fillOval(x, y, 20, 20);
+                g.fillOval(x, y, size, size);
             }
         };
         canvas.setPreferredSize(new Dimension(500, 500));
         frame.add(canvas);
-        timer = new Timer(1000/60, new ActionListener(){
+        frame.addKeyListener(new KeyListener(){
+            public void keyPressed(KeyEvent e){
+                int key = e.getKeyCode();
+                if(key == KeyEvent.VK_UP){
+                    dx = 0;
+                    dy = -1;
+                }
+                else if(key == KeyEvent.VK_DOWN){
+                    dx = 0;
+                    dy = 1;
+                }
+                else if(key == KeyEvent.VK_LEFT){
+                    dx = -1;
+                    dy = 0;
+                }
+                else if(key == KeyEvent.VK_RIGHT){
+                    dx = 1;
+                    dy = 0;
+                }
+            }
+            public void keyReleased(KeyEvent e){};
+            public void keyTyped(KeyEvent e){};
+        });
+        timer = new Timer(1000, new ActionListener(){
             public void actionPerformed(ActionEvent evt){
-                f_theta += 0.05;
+                x += dx * size;
+                y += dy * size;
+                if(x < 0 || x > 500 || y < 10 || y > 500){
+                    timer.stop();
+                }
                 canvas.repaint();
             }
         });
