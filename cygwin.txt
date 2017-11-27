@@ -1,0 +1,24 @@
+1. Java
+    * google "install jdk"
+    * look for Windows and x64
+    * run the downloaded setup and follow default settings
+
+2. Python
+    * google "install python"
+    * look for Windows x86-64 web-based installer
+    * run the downloaded setup and follow default settings
+
+3 Cygwin
+    * google "cygwin"
+    * look for setup-x86_64.exe
+    * download and run the setup
+    ** accept default until the package selection screen
+        * Notice the drop-down button to the left of search input? choose Full (instead of Pending)
+        * Search following packages: make, wget, vim, git, perl, gcc-core
+        **  each time it will list many choices, look for the one the matches exactly
+        **  for example, for git, look for "git: Distr..."
+        **  Click over the text where it says "Skip" until it shows a version such as "2.15.0-1"
+        **  move on to next package (simply start new search)
+    * Click Next and follow defaults to finish
+
+
