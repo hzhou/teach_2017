@@ -1,3 +1,2 @@
-include_path: deflib
 output_dir: out
 module: general
