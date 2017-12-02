@@ -1,0 +1,35 @@
+include: c/save_bmp.def
+# include: c/save_ppm.def
+
+page: test, basic_frame
+    module: c
+
+    n_w=200
+    n_h=100
+
+    $allocate(n_w*n_h*3) pc_data
+    &call each_pixel
+        $(if:1)
+            $if (i*8/n_h + j*8/n_w) % 2
+                $call set_rgb, 1.0, 0.0, 0.0
+            $else
+                $call set_rgb, 0.8, 0.8, 0.8
+        $(else)
+            tf_r = (float)j/n_w
+            tf_g = (float)i/n_h
+            tf_b = 0.2
+            $call set_rgb, tf_r, tf_g, tf_b
+
+    save_bmp(pc_data, n_w, n_h, "t.bmp")
+    # $call save_ppm, pc_data, n_w, n_h, "t.ppm"
+
+    subcode: each_pixel
+        k=0
+        $for i=0:n_h
+            $for j=0:n_w
+                BLOCK
+                k+=3
+        subcode: set_rgb(r,g,b)
+            $(for:0,1,2 and b,g,r)
+                pc_data[k+$1]   = (int)($($2)*255.99)
+
