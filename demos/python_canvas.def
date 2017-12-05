@@ -7,9 +7,9 @@ page: test, tkinter
     &call add_canvas, 500, 500
         $call rect_line
         $call nine_dots, 150, 20
-        $call text, 50, 200, "Hello World!"
+        $call text, 50, 185, "Hello World!"
         photo = PhotoImage(file='../resource/cat.gif')
-        C.create_image(250, 200, image=photo, anchor=NW)
+        C.create_image(260, 220, image=photo, anchor=NW)
 
     C.config(background='#fcfcfc')
 
